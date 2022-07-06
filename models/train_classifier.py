@@ -29,6 +29,10 @@ def load_data(database_filepath):
     """
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table(engine.table_names()[0], engine)
+    
+    # Temporarily solution for noise data to apply binary classification
+    df = df[df["('related',)"] != 2]
+    
     X = df['message']
     y = df[df.columns[4:]]
     

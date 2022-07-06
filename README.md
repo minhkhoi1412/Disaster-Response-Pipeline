@@ -21,6 +21,10 @@
 **Libraries**
 - Install all packages using requirements.txt file. This is the command to install: `pip install -r requirements.txt`
 
+**Link to GitHub Repository**
+
+`https://github.com/minhkhoi1412/Disaster-Response-Pipeline`
+
 
 ## **Project Descriptions**
 

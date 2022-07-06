@@ -11,7 +11,7 @@ nltk.download(['wordnet', 'punkt', 'stopwords'])
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import  SVC
@@ -85,16 +85,15 @@ def build_model():
                        ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
     
-    parameters = {
-            'tfidf__use_idf':[True, False],
-            'clf__estimator__n_estimators': [10, 25],
-            'clf__estimator__min_samples_split': [3, 4]
-        }
+    # parameters = {
+    #         'tfidf__use_idf':[True, False],
+    #         'clf__estimator__n_estimators': [10, 25],
+    #         'clf__estimator__min_samples_split': [3, 4]
+    #     }
 
-    cv = GridSearchCV(pipeline, param_grid=parameters, verbose=2)
-    cv.fit(X_train, y_train)
+    # cv = GridSearchCV(pipeline, param_grid=parameters, verbose=2)
     
-    return cv
+    return pipeline
 
 
 def evaluate_model(model, X_test, Y_test):
@@ -104,10 +103,10 @@ def evaluate_model(model, X_test, Y_test):
     Input: model, X_test, Y_test
     Output: classification_report
     """
-    y_pred_improved = model.predict(X_test)
-    for i in range(y.shape[1]):
-        print(y.columns[i], ':')
-        print(classification_report(Y_test.values[:,i], y_pred_improved[:,i]), '_'*50)
+    y_pred = model.predict(X_test)
+    for i in range(Y_test.shape[1]):
+        print(Y_test.columns[i], ':')
+        print(classification_report(Y_test.values[:,i], y_pred[:,i]), '_'*50)
 
 
 def save_model(model, model_filepath):
@@ -119,7 +118,7 @@ def main():
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
-        X, Y, category_names = load_data(database_filepath)
+        X, Y= load_data(database_filepath)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         
         print('Building model...')
